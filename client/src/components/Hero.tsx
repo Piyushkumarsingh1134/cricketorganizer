@@ -4,7 +4,8 @@ import Navbar from "./Navbar";
 
 export default function Hero() {
   return (
-    <><Navbar /><div className="w-[90%] max-w-[1100px] mx-auto bg-white">
+    <><Navbar />
+    <div className="w-[90%] max-w-[1100px] mx-auto bg-white ">
       <div className="grid grid-cols-2 h-[600px]">
         <div className="flex flex-col justify-center p-10">
           <p className="text-2xl font-semibold text-blue-700 text-center mb-8 leading-relaxed">
@@ -23,7 +24,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex justify-center items-end p-4">
+        <div className="flex justify-center items-end p-4  mt-20">
           <img
             src={cricketImage}
             alt="Cricket Tournament"

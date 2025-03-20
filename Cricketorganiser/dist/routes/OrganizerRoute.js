@@ -13,4 +13,5 @@ organizerRouter.get("/", (req, res) => {
 organizerRouter.post('/Register', Organizercontroller_1.registerOrganizer);
 organizerRouter.post('/login', Organizercontroller_1.loginOrganizer);
 organizerRouter.post('/tournament', Organizermiddleware_1.default, Organizercontroller_1.scheduleTournament);
+organizerRouter.get('/organisetournament', Organizermiddleware_1.default, Organizercontroller_1.gettournament);
 exports.default = organizerRouter;

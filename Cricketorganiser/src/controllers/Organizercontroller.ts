@@ -101,3 +101,19 @@ export const scheduleTournament = async (req: Request, res: Response): Promise<a
 };
 
 
+export const gettournament = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const organizerId = (req as any).organizerId;
+
+        const tournament = await prisma.tournament.findMany({
+            where: { organizerId }
+        });
+
+        res.json(tournament);
+    } catch (error) {
+        console.error("Error fetching tournaments:", error);
+        res.status(500).json({ error: "No tournament organise" });
+    }
+};
+
+

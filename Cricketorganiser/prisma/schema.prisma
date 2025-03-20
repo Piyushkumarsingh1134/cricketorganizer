@@ -41,9 +41,9 @@ model Team {
   id            String       @id @default(uuid())
   name          String
   captainName   String
-  captainEmail  String
-  tournamentId  String
-  tournament    Tournament   @relation(fields: [tournamentId], references: [id])
+  captainEmail  String         @unique  
+  tournamentId  String?
+  tournament    Tournament?   @relation(fields: [tournamentId], references: [id])
 }
 
 model Schedule {

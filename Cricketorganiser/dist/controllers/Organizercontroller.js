@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.scheduleTournament = exports.loginOrganizer = exports.registerOrganizer = void 0;
+exports.gettournament = exports.scheduleTournament = exports.loginOrganizer = exports.registerOrganizer = void 0;
 const client_1 = require("@prisma/client");
 const auth_1 = require("../utils/auth");
 const prisma = new client_1.PrismaClient();
@@ -91,3 +91,17 @@ const scheduleTournament = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.scheduleTournament = scheduleTournament;
+const gettournament = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const organizerId = req.organizerId;
+        const tournament = yield prisma.tournament.findMany({
+            where: { organizerId }
+        });
+        res.json(tournament);
+    }
+    catch (error) {
+        console.error("Error fetching tournaments:", error);
+        res.status(500).json({ error: "No tournament organise" });
+    }
+});
+exports.gettournament = gettournament;

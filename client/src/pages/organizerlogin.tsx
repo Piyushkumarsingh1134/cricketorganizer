@@ -1,13 +1,27 @@
+import axios from "axios";
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export function Organizerlogin() {
+export function OrganizerLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
+    const navigate = useNavigate();
+   
 
-    const handlelogin = () => {
-        console.log("Email:", email);
-        console.log("Password:", password);
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/api/v1/organizer/login`, { email, password });
+            localStorage.setItem("token", response.data.token);
+            navigate("/Organizerdashboard")
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Login failed! Try again.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
+        }
     };
 
     return (
@@ -20,8 +34,9 @@ export function Organizerlogin() {
                         <label className="text-xl font-bold text-left">Enter your email</label>
                         <input 
                             type="text" 
-                            placeholder="piyush@gmail.com" 
+                            placeholder="organizer@example.com" 
                             className="w-full py-2 px-2 border rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+                            value={email}
                             onChange={(e) => setEmail(e.target.value)} 
                         />
                     </div>
@@ -32,13 +47,14 @@ export function Organizerlogin() {
                             type="password" 
                             placeholder="********" 
                             className="w-full py-2 px-2 border rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+                            value={password}
                             onChange={(e) => setPassword(e.target.value)} 
                         />
                     </div>
 
                     <button 
                         className="w-full py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-200"
-                        onClick={handlelogin}
+                        onClick={handleLogin}
                     >
                         Login
                     </button>
@@ -47,3 +63,4 @@ export function Organizerlogin() {
         </div>
     );
 }
+
