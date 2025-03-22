@@ -15,7 +15,7 @@ export default function Hero() {
           </p>
 
           <div className="flex justify-center gap-6">
-            <Link to="/register/team" className="px-7 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">
+            <Link to="/RegisterTeam"className="px-7 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">
               Get Started as Team
             </Link>
             <Link to="/register/organizer" className="px-7 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition duration-300">

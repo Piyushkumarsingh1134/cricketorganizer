@@ -7,6 +7,9 @@ import { OrganizerLogin } from './pages/organizerlogin'
 import Organizerdashboard from './components/Organizerdashboard'
 import BackgroundShapeDemo from './pages/Test'
 import OrganizerDashboard from './components/Organizerdashboard'
+import RegisterTeam from './pages/Teamregistraion'
+import LoginTeam from './pages/Loginteam'
+import Tournament from './components/Tournamnet'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -21,6 +24,9 @@ function App() {
           <Route path="/register/organizer" element={<OrganizerRegistration />} />
           <Route path="/Organizerlogin"     element={<OrganizerLogin/>}/>
           <Route path="/Organizerdashboard"  element={<Organizerdashboard/>}/>
+          <Route path="/RegisterTeam"        element={<RegisterTeam/>}/>
+          <Route path="/LoginTeam"        element={<LoginTeam/>}/>
+          <Route path="/Tournament"        element={<Tournament/>}/>
         </Routes> }
       
     </BrowserRouter>
