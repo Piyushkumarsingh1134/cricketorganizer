@@ -18,9 +18,9 @@ const LoginTeam = () => {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("team", JSON.stringify(res.data.team));
 
-      // Show toast and navigate immediately
-      toast.success("Login Successful!", { autoClose: 1000 }); // 1 sec duration
-      setTimeout(() => navigate("/Tournament"), 1000); // Navigate after toast
+     
+      toast.success("Login Successful!", { autoClose: 1000 });
+      setTimeout(() => navigate("/Tournament"), 1000); 
     } catch (err: any) {
       setError(err.response?.data?.error || "Something went wrong");
       toast.error("Login failed! Please try again.");
