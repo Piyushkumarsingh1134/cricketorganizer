@@ -10,4 +10,5 @@ tournamentRoute.get("/", (req, res) => {
     res.send("team API is working!");
 });
 tournamentRoute.get('/getAllTournaments', Tournament_1.getAllTournaments);
+tournamentRoute.post('/jointournament', Tournament_1.joinTournament);
 exports.default = tournamentRoute;

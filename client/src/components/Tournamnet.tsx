@@ -51,7 +51,7 @@ const Tournament = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/v1/team/join-tournament",
+        "http://localhost:3000/api/v1/tournament/jointournament",
         { tournamentId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
