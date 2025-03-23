@@ -1,6 +1,6 @@
 import express from "express";
 import { gettournament, loginOrganizer, registerOrganizer, scheduleTournament } from "../controllers/Organizercontroller";
-import getOrganizerId from "../middleware/Organizermiddleware";
+import  { authMiddleware } from "../middleware/Organizermiddleware";
 
 const organizerRouter = express.Router();
 
@@ -12,9 +12,9 @@ organizerRouter.post('/Register',registerOrganizer);
 organizerRouter.post('/login',loginOrganizer);
 
 
-organizerRouter.post('/tournament',getOrganizerId,scheduleTournament);
+organizerRouter.post('/tournament',authMiddleware,scheduleTournament);
 
 
-organizerRouter.get('/organisetournament',getOrganizerId,gettournament);
+organizerRouter.get('/organisetournament',authMiddleware,gettournament);
 
 export default organizerRouter;

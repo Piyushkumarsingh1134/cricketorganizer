@@ -72,14 +72,14 @@ const scheduleTournament = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const { name, startDate, endDate, description, entryFee, banner } = req.body;
         const organizerId = req.organizerId;
-        console.log(organizerId);
+        console.log("Organizer ID inside scheduleTournament:", organizerId);
         const tournament = yield prisma.tournament.create({
             data: {
                 name,
                 startDate: new Date(startDate),
                 endDate: new Date(endDate),
                 description,
-                entryFee,
+                entryFee: entryFee ? parseInt(entryFee, 10) : null,
                 organizerId,
                 banner: banner || null
             }

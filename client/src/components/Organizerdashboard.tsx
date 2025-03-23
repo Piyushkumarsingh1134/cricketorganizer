@@ -97,7 +97,7 @@ export default function OrganizerDashboard() {
                     <div className="text-center bg-white p-6 rounded-lg shadow-md">
                         <h2 className="text-2xl font-bold text-blue-600 mb-4">Ready to schedule your first tournament?</h2>
                         <button
-                            onClick={() => navigate("/schedule-tournament")}
+                            onClick={() => navigate("/ScheduleTournament")}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-lg font-semibold transition duration-200"
                         >
                             Schedule Tournament

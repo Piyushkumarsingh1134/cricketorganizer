@@ -10,9 +10,10 @@ import OrganizerDashboard from './components/Organizerdashboard'
 import RegisterTeam from './pages/Teamregistraion'
 import LoginTeam from './pages/Loginteam'
 import Tournament from './components/Tournamnet'
+import { ScheduleTournament } from './components/sechduletournament'
 
 function App() {
-  const [count, setCount] = useState(0)
+ 
 
   return (
     <>
@@ -27,6 +28,7 @@ function App() {
           <Route path="/RegisterTeam"        element={<RegisterTeam/>}/>
           <Route path="/LoginTeam"        element={<LoginTeam/>}/>
           <Route path="/Tournament"        element={<Tournament/>}/>
+          <Route path='/ScheduleTournament' element={ <ScheduleTournament/>}/>
         </Routes> }
       
     </BrowserRouter>

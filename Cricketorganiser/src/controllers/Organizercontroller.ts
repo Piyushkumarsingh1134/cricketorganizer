@@ -80,7 +80,8 @@ export const scheduleTournament = async (req: Request, res: Response): Promise<a
         const { name, startDate, endDate, description, entryFee, banner } = req.body as any;
         const organizerId = (req as any).organizerId;
 
-        console.log(organizerId);
+       
+         console.log("Organizer ID inside scheduleTournament:", organizerId);
 
         const tournament = await prisma.tournament.create({
             data: {
@@ -88,7 +89,7 @@ export const scheduleTournament = async (req: Request, res: Response): Promise<a
                 startDate: new Date(startDate),
                 endDate: new Date(endDate),
                 description,
-                entryFee,
+                entryFee: entryFee ? parseInt(entryFee, 10) : null,
                 organizerId,
                 banner:banner || null
             }

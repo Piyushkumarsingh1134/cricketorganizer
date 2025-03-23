@@ -3,32 +3,26 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = "your_secret_key"; 
 
-const getOrganizerId = (req: Request, res: Response, next: NextFunction):void => {
+interface AuthRequest extends Request {
+  organizerId?: string;
+}
+
+export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-      res.status(401).json({ error: "Unauthorized: No token provided" });
-      return ;
+      res.status(401).json({ message: "Unauthorized: No token provided" });
+      return; 
     }
 
- 
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
 
-    if (!decoded?.id) {
-       res.status(401).json({ error: "Unauthorized: Invalid token" });
-       return;
-    }
+    console.log("Decoded Token:", decoded); 
 
-    (req as any).organizerId = decoded.id;  
-
-    next();
+    req.organizerId = decoded.id; 
+    next(); 
   } catch (error) {
-    res.status(401).json({ error: "Unauthorized: Invalid token" });
-    return ;
+    res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
-
-export default getOrganizerId;
-
-  
