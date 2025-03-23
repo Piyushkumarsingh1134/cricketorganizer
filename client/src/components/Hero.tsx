@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import cricketImage from "../assets/image/cricket.jpg";
 import Navbar from "./Navbar";
+import Footer from "../pages/footer";
 
 export default function Hero() {
   return (
@@ -31,6 +32,7 @@ export default function Hero() {
             className="w-full h-full object-cover self-end" />
         </div>
       </div>
+    
     </div></>
   );
 }

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gettournament = exports.scheduleTournament = exports.loginOrganizer = exports.registerOrganizer = void 0;
+exports.getTeams = exports.gettournament = exports.scheduleTournament = exports.loginOrganizer = exports.registerOrganizer = void 0;
 const client_1 = require("@prisma/client");
 const auth_1 = require("../utils/auth");
 const prisma = new client_1.PrismaClient();
@@ -105,3 +105,37 @@ const gettournament = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.gettournament = gettournament;
+const getTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const organizerId = req.organizerId;
+        console.log("Inside the team", organizerId);
+        const tournaments = yield prisma.tournament.findMany({
+            where: { organizerId },
+            select: {
+                id: true,
+                teams: {
+                    select: {
+                        id: true,
+                        name: true,
+                        captainName: true,
+                        captainEmail: true,
+                    },
+                },
+            },
+        });
+        if (tournaments.length === 0) {
+            return res.status(404).json({
+                message: "No tournaments found for this organizer",
+                teams: [],
+            });
+        }
+        // Collect all teams from the tournaments
+        const teams = tournaments.flatMap((tournament) => tournament.teams);
+        res.status(200).json({ teams });
+    }
+    catch (error) {
+        console.error("Error fetching teams:", error);
+        res.status(500).json({ error: "Failed to fetch teams" });
+    }
+});
+exports.getTeams = getTeams;

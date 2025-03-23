@@ -11,6 +11,7 @@ import RegisterTeam from './pages/Teamregistraion'
 import LoginTeam from './pages/Loginteam'
 import Tournament from './components/Tournamnet'
 import { ScheduleTournament } from './components/sechduletournament'
+import TeamsList from './components/Team'
 
 function App() {
  
@@ -29,6 +30,7 @@ function App() {
           <Route path="/LoginTeam"        element={<LoginTeam/>}/>
           <Route path="/Tournament"        element={<Tournament/>}/>
           <Route path='/ScheduleTournament' element={ <ScheduleTournament/>}/>
+          <Route path='/TeamsList' element={ <TeamsList/>}/>
         </Routes> }
       
     </BrowserRouter>

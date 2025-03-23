@@ -1,5 +1,5 @@
 import express from "express";
-import { gettournament, loginOrganizer, registerOrganizer, scheduleTournament } from "../controllers/Organizercontroller";
+import { getTeams, gettournament, loginOrganizer, registerOrganizer, scheduleTournament } from "../controllers/Organizercontroller";
 import  { authMiddleware } from "../middleware/Organizermiddleware";
 
 const organizerRouter = express.Router();
@@ -16,5 +16,10 @@ organizerRouter.post('/tournament',authMiddleware,scheduleTournament);
 
 
 organizerRouter.get('/organisetournament',authMiddleware,gettournament);
+
+
+
+organizerRouter.get('/teams/details',authMiddleware , getTeams);
+
 
 export default organizerRouter;

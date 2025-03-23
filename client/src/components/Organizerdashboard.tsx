@@ -73,6 +73,9 @@ export default function OrganizerDashboard() {
                     <button onClick={() => navigate("/organize-match")} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-lg">
                         Organize Match
                     </button>
+                    <button onClick={() => navigate("/TeamsList")} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-lg">
+                        Teams List
+                    </button>
                 </nav>
             </div>
 

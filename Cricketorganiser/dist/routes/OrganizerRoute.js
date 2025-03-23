@@ -14,4 +14,5 @@ organizerRouter.post('/Register', Organizercontroller_1.registerOrganizer);
 organizerRouter.post('/login', Organizercontroller_1.loginOrganizer);
 organizerRouter.post('/tournament', Organizermiddleware_1.authMiddleware, Organizercontroller_1.scheduleTournament);
 organizerRouter.get('/organisetournament', Organizermiddleware_1.authMiddleware, Organizercontroller_1.gettournament);
+organizerRouter.get('/teams/details', Organizermiddleware_1.authMiddleware, Organizercontroller_1.getTeams);
 exports.default = organizerRouter;
