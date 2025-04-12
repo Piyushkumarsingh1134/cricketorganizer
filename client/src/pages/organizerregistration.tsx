@@ -24,7 +24,7 @@ export default function OrganizerRegistration() {
             localStorage.setItem("token", token); // Store token in local storage
 
             setSuccess("Registration successful! Redirecting...");
-            setTimeout(() => navigate("/Organizerdashboard"), 1000); // Redirect after 1s
+            setTimeout(() => navigate("/organizer"), 1000); // Redirect after 1s
 
             setName("");
             setEmail("");

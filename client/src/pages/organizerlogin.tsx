@@ -15,7 +15,7 @@ export function OrganizerLogin() {
         try {
             const response = await axios.post(`${API_BASE_URL}/api/v1/organizer/login`, { email, password });
             localStorage.setItem("token", response.data.token);
-            navigate("/Organizerdashboard")
+            navigate("/organizer")
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Login failed! Try again.", {
                 position: "top-right",

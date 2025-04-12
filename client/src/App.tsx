@@ -1,44 +1,40 @@
-import { useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import OrganizerRegistration from './pages/organizerregistration'
-import { OrganizerLogin } from './pages/organizerlogin'
-import Organizerdashboard from './components/Organizerdashboard'
-import BackgroundShapeDemo from './pages/Test'
-import OrganizerDashboard from './components/Organizerdashboard'
-import RegisterTeam from './pages/Teamregistraion'
-import LoginTeam from './pages/Loginteam'
-import Tournament from './components/Tournamnet'
-import { ScheduleTournament } from './components/sechduletournament'
-import TeamsList from './components/Team'
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Hero from './components/Hero';
+import Navbar from './components/Navbar';
+import OrganizerRegistration from './pages/organizerregistration';
+import { OrganizerLogin } from './pages/organizerlogin';
+import RegisterTeam from './pages/Teamregistraion';
+import LoginTeam from './pages/Loginteam';
+import Tournament from './components/Tournamnet';
+import { ScheduleTournament } from './components/sechduletournament';
+import TeamsList from './components/Team';
+import OrganizerDashboard from './components/Organizerdashboard';
+import OrganizerLayout from './components/Organizerlayout';
 
 function App() {
- 
-
   return (
-    <>
     <BrowserRouter>
-     {
-        
-        <Routes>
-          <Route path="/" element={<Hero />} />
-          <Route path="/register/organizer" element={<OrganizerRegistration />} />
-          <Route path="/Organizerlogin"     element={<OrganizerLogin/>}/>
-          <Route path="/Organizerdashboard"  element={<Organizerdashboard/>}/>
-          <Route path="/RegisterTeam"        element={<RegisterTeam/>}/>
-          <Route path="/LoginTeam"        element={<LoginTeam/>}/>
-          <Route path="/Tournament"        element={<Tournament/>}/>
-          <Route path='/ScheduleTournament' element={ <ScheduleTournament/>}/>
-          <Route path='/TeamsList' element={ <TeamsList/>}/>
-        </Routes> }
-      
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Hero />} />
+        <Route path="/register/organizer" element={<OrganizerRegistration />} />
+        <Route path="/Organizerlogin" element={<OrganizerLogin />} />
+        <Route path="/RegisterTeam" element={<RegisterTeam />} />
+        <Route path="/LoginTeam" element={<LoginTeam />} />
+        <Route path="/Tournament" element={<Tournament />} />
+
+        {/* Organizer Routes with Persistent Sidebar */}
+        <Route path="/organizer" element={<OrganizerLayout />}>
+          <Route index element={<OrganizerDashboard />} />
+          <Route path="schedule" element={<ScheduleTournament />} />
+          <Route path="teams" element={<TeamsList />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
-  
- 
-    </>
-  )
+  );
 }
 
-export default App
+export default App;
+
 
