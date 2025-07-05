@@ -6,6 +6,7 @@ import cors from "cors";
 import teamRoute from './routes/TeamRoute';
 
 import tournamentRoute from './routes/Tournament';
+import matchrouter from './routes/Matchroute';
 const prisma = new PrismaClient();
 const app = express(); 
 
@@ -25,6 +26,9 @@ app.use("/api/v1/team",teamRoute);
 
 
 app.use("/api/v1/tournament", tournamentRoute);
+
+app.use("/api/v1/match", matchrouter);
+
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
