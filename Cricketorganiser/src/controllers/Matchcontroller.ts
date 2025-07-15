@@ -94,73 +94,151 @@ export const  openingplayer=async(req:Request,res:Response):Promise<any>=>{
     }
 }
 
+
 export const updateScore = async (req: Request, res: Response): Promise<any> => {
-  const { matchId } = req.params;
-  const { runs, isWicket = false } = req.body;
+  try {
+    const { matchId } = req.params
+    const {
+      runs,
+      isWicket = false,
+      newBowler = null,
+      newBatsman = null,
+      action = "score", // "score", "setBowler", "setBatsman"
+    } = req.body
 
-  const data = await redisClient.get(`match:${matchId}`);
-  if (!data) return res.status(404).json({ error: "Match not found" });
+    console.log("⚡️ Entered updateScore for match:", matchId, "Action:", action)
 
-  const match = JSON.parse(data);
+    const data = await redisClient.get(`match:${matchId}`)
+    if (!data) {
+      console.warn("🚫 Match not found in Redis:", matchId)
+      return res.status(404).json({ error: "Match not found" })
+    }
 
-  if (!match.striker || !match.bowler || !match.nonStriker) {
-    return res.status(400).json({ error: "Players not set" });
+    const match = JSON.parse(data)
+
+    // Handle setting new bowler after over completion
+    if (action === "setBowler" && newBowler) {
+      match.bowler = {
+        name: newBowler,
+        overs: 0,
+        balls: 0,
+        runsGiven: 0,
+        wickets: 0,
+      }
+
+      await redisClient.set(`match:${matchId}`, JSON.stringify(match))
+      return res.json({
+        message: `New bowler ${newBowler} set successfully`,
+        match,
+        bowlerSet: true,
+      })
+    }
+
+    // Handle setting new batsman after wicket
+    if (action === "setBatsman" && newBatsman) {
+      // Replace the striker (who got out) with new batsman
+      match.striker = {
+        name: newBatsman,
+        runs: 0,
+        balls: 0,
+        fours: 0,
+        sixes: 0,
+      }
+
+      await redisClient.set(`match:${matchId}`, JSON.stringify(match))
+      return res.json({
+        message: `New batsman ${newBatsman} set successfully`,
+        match,
+        batsmanSet: true,
+      })
+    }
+
+    // Regular scoring logic
+    if (action === "score") {
+      if (!match.striker || !match.bowler || !match.nonStriker) {
+        console.warn("⚠️ Players not set properly in match:", matchId)
+        return res.status(400).json({ error: "Players not set" })
+      }
+
+      // 🏏 Update striker stats (always count the ball)
+      match.striker.balls += 1
+
+      // Add runs only if it's not a clean bowled wicket
+      if (!isWicket || runs > 0) {
+        match.striker.runs += runs
+        if (runs === 4) match.striker.fours += 1
+        if (runs === 6) match.striker.sixes += 1
+      }
+
+      // 🏏 Update bowler stats
+      match.bowler.balls += 1
+      match.bowler.runsGiven += runs
+
+      // Handle wicket
+      if (isWicket) {
+        match.totalWickets += 1
+        match.bowler.wickets += 1
+        console.log("🎯 Wicket taken! Total wickets:", match.totalWickets)
+      }
+
+      match.totalRuns += runs
+
+      // 📜 Add ball history
+      match.balls.push({
+        batsman: match.striker.name,
+        bowler: match.bowler.name,
+        runs,
+        isWicket,
+        over: Math.floor(match.balls.length / 6),
+        ball: (match.balls.length % 6) + 1,
+        timestamp: new Date().toISOString(),
+      })
+
+      // 🔁 Swap strike on odd runs (only if not a wicket)
+      if (!isWicket && runs % 2 === 1) {
+        ;[match.striker, match.nonStriker] = [match.nonStriker, match.striker]
+      }
+
+      // ⏱️ Handle end of over
+      if (match.bowler.balls === 6) {
+        match.bowler.overs += 1
+        match.bowler.balls = 0
+        ;[match.striker, match.nonStriker] = [match.nonStriker, match.striker]
+        match.previousBowler = match.bowler.name
+        match.bowler = null
+
+        await redisClient.set(`match:${matchId}`, JSON.stringify(match))
+        return res.json({
+          message: "Over completed. Please select a new bowler.",
+          match,
+          requireNewBowler: true,
+        })
+      }
+
+      // Save match state
+      await redisClient.set(`match:${matchId}`, JSON.stringify(match))
+
+      // Handle wicket - require new batsman
+      if (isWicket) {
+        console.log("🚨 Wicket! Requiring new batsman selection")
+        return res.json({
+          message: "Wicket! Please select a new batsman.",
+          match,
+          requireNewBatsman: true,
+        })
+      }
+
+      // Regular score update
+      return res.json({
+        message: `Score updated: ${runs} run${runs !== 1 ? "s" : ""}`,
+        match,
+      })
+    }
+
+    return res.status(400).json({ error: "Invalid action" })
+  } catch (error: any) {
+    console.error("❌ Error in updateScore:", error.message)
+    res.status(500).json({ error: "Internal server error" })
   }
+}
 
-  // Update striker
-  match.striker.runs += runs;
-  match.striker.balls += 1;
-  if (runs === 4) match.striker.fours += 1;
-  if (runs === 6) match.striker.sixes += 1;
-
-  // Update bowler
-  match.bowler.balls += 1;
-  match.bowler.runsGiven += runs;
-
-  if (isWicket) {
-    match.totalWickets += 1;
-    match.bowler.wickets += 1;
-  }
-
-  match.totalRuns += runs;
-
-  // Add ball history
-  match.balls.push({
-    batsman: match.striker.name,
-    bowler: match.bowler.name,
-    runs,
-    isWicket,
-    over: Math.floor(match.balls.length / 6),
-    ball: (match.balls.length % 6) + 1,
-    timestamp: new Date().toISOString(),
-  });
-
-  // 🔁 Swap strike if runs is odd
-  if (runs % 2 === 1) {
-    [match.striker, match.nonStriker] = [match.nonStriker, match.striker];
-  }
-
-  // ⏱️ Over complete logic
-  if (match.bowler.balls === 6) {
-    match.bowler.overs += 1;
-    match.bowler.balls = 0;
-
-    // Swap strike again at end of over
-    [match.striker, match.nonStriker] = [match.nonStriker, match.striker];
-
-    // Save current bowler as previous
-    match.previousBowler = match.bowler.name;
-
-    // Unset bowler to force selection of next
-    match.bowler = null;
-
-    return res.json({
-      message: "Over completed. Please select a new bowler.",
-      match,
-      requireNewBowler: true
-    });
-  }
-
-  await redisClient.set(`match:${matchId}`, JSON.stringify(match));
-  res.json({ message: "Score updated", match });
-};

@@ -9,4 +9,5 @@ const matchrouter = express_1.default.Router();
 matchrouter.post("/CreateMatch", Matchcontroller_1.CreateMatch);
 matchrouter.post("/:matchId/setToss", Matchcontroller_1.setToss);
 matchrouter.post("/:matchId/openingplayer", Matchcontroller_1.openingplayer);
+matchrouter.post("/:matchId/updateScore", Matchcontroller_1.updateScore);
 exports.default = matchrouter;

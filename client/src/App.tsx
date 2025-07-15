@@ -11,6 +11,7 @@ import { ScheduleTournament } from './components/sechduletournament';
 import TeamsList from './components/Team';
 import OrganizerDashboard from './components/Organizerdashboard';
 import OrganizerLayout from './components/Organizerlayout';
+import CricketScorer from './pages/Match';
 
 function App() {
   return (
@@ -23,12 +24,14 @@ function App() {
         <Route path="/RegisterTeam" element={<RegisterTeam />} />
         <Route path="/LoginTeam" element={<LoginTeam />} />
         <Route path="/Tournament" element={<Tournament />} />
+        <Route path="/CricketScorer" element={<CricketScorer/>}/>
 
         {/* Organizer Routes with Persistent Sidebar */}
         <Route path="/organizer" element={<OrganizerLayout />}>
           <Route index element={<OrganizerDashboard />} />
           <Route path="schedule" element={<ScheduleTournament />} />
           <Route path="teams" element={<TeamsList />} />
+          
         </Route>
       </Routes>
     </BrowserRouter>

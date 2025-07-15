@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.openingplayer = exports.setToss = exports.CreateMatch = void 0;
+exports.updateScore = exports.openingplayer = exports.setToss = exports.CreateMatch = void 0;
 const uuid_1 = require("uuid");
 const redisclient_1 = __importDefault(require("../utils/redisclient"));
 const CreateMatch = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -94,3 +94,71 @@ const openingplayer = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.openingplayer = openingplayer;
+// adjust path as per your project
+const updateScore = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { matchId } = req.params;
+        const { runs, isWicket = false } = req.body;
+        console.log("⚡️ Entered updateScore for match:", matchId);
+        const data = yield redisclient_1.default.get(`match:${matchId}`);
+        if (!data) {
+            console.warn("🚫 Match not found in Redis:", matchId);
+            return res.status(404).json({ error: "Match not found" });
+        }
+        const match = JSON.parse(data);
+        if (!match.striker || !match.bowler || !match.nonStriker) {
+            console.warn("⚠️ Players not set properly in match:", matchId);
+            return res.status(400).json({ error: "Players not set" });
+        }
+        // 🏏 Update striker
+        match.striker.runs += runs;
+        match.striker.balls += 1;
+        if (runs === 4)
+            match.striker.fours += 1;
+        if (runs === 6)
+            match.striker.sixes += 1;
+        // 🏏 Update bowler
+        match.bowler.balls += 1;
+        match.bowler.runsGiven += runs;
+        if (isWicket) {
+            match.totalWickets += 1;
+            match.bowler.wickets += 1;
+        }
+        match.totalRuns += runs;
+        // 📜 Add ball history
+        match.balls.push({
+            batsman: match.striker.name,
+            bowler: match.bowler.name,
+            runs,
+            isWicket,
+            over: Math.floor(match.balls.length / 6),
+            ball: (match.balls.length % 6) + 1,
+            timestamp: new Date().toISOString(),
+        });
+        // 🔁 Swap strike on odd runs
+        if (runs % 2 === 1) {
+            [match.striker, match.nonStriker] = [match.nonStriker, match.striker];
+        }
+        // ⏱️ Handle end of over
+        if (match.bowler.balls === 6) {
+            match.bowler.overs += 1;
+            match.bowler.balls = 0;
+            [match.striker, match.nonStriker] = [match.nonStriker, match.striker];
+            match.previousBowler = match.bowler.name;
+            match.bowler = null;
+            yield redisclient_1.default.set(`match:${matchId}`, JSON.stringify(match));
+            return res.json({
+                message: "Over completed. Please select a new bowler.",
+                match,
+                requireNewBowler: true
+            });
+        }
+        yield redisclient_1.default.set(`match:${matchId}`, JSON.stringify(match));
+        res.json({ message: "Score updated", match });
+    }
+    catch (error) {
+        console.error("❌ Error in updateScore:", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.updateScore = updateScore;
